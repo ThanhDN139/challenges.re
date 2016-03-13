@@ -1,0 +1,24 @@
+<f>:
+   0:          mov    eax,DWORD PTR [esp+0x4]       ; eax = arg
+   4:          bswap  eax                           ; eax[0:7]   = eax[24:31],  eax[8:15]  = eax[16:23]
+                                                    ; eax[16:23] = eax[8:15],   eax[24:31] = eax[0:7]
+                                                    ; ==> eax = arg[24:31-16:23-8:15-0:7]
+   6:          mov    edx,eax                       ; edx = eax
+   8:          and    eax,0xf0f0f0f                 ; eax[0:3] = eax[8:11] = ... = eax[24:27] = 0
+   d:          and    edx,0xf0f0f0f0                ; edx[4:7] = edx[12:15]= ... = edx[28:31] = 0
+  13:          shr    edx,0x4                       ; edx[28:31] = edx[24:27],...., edx[4:7] = edx[0:3], edx[0:3] = 0
+  16:          shl    eax,0x4                       ; eax[0:3] = eax[4:7],........; eax[24:27] = eax[28:31], eax[28:31] = 0
+  19:          or     eax,edx                       ; eax = eax & edx ==> eax = arg[28:31-24:27---4:7-0:3]
+  1b:          mov    edx,eax                       ; edx = eax
+  1d:          and    eax,0x33333333
+  22:          and    edx,0xcccccccc
+  28:          shr    edx,0x2
+  2b:          shl    eax,0x2
+  2e:          or     eax,edx
+  30:          mov    edx,eax
+  32:          and    eax,0x55555555
+  37:          and    edx,0xaaaaaaaa
+  3d:          add    eax,eax
+  3f:          shr    edx,1
+  41:          or     eax,edx                       ; eax = arg[31:0]
+  43:          ret
